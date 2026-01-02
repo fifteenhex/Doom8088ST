@@ -99,17 +99,32 @@ void PCFX_Shutdown(void)
 //
 
 static boolean isTimerSet;
-
+static time_t baseTime;
 
 int32_t I_GetTime(void)
 {
-    //return clock() * TICRATE / CLOCKS_PER_SEC;
-    return 0;
+	struct timespec ts;
+	long tmp;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
+		return 0;
+	}
+
+	tmp = ts.tv_nsec / (1000000000L / TICRATE);
+
+	return ((ts.tv_sec - baseTime) * TICRATE) + tmp;
 }
 
 
 void I_InitTimer(void)
 {
+	struct timespec ts;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1)
+		return;
+
+	baseTime = ts.tv_sec;
+
 	isTimerSet = true;
 }
 
