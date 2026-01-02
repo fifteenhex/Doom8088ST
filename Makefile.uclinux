@@ -15,6 +15,16 @@ endif
 		-include $(NOLIBCDIR)/nolibc.h \
 		-Os -c -o $@ $<
 
+libgcc/lb1sf68.o: libgcc/lb1sf68.S
+	$(CC) -g -nostdlib \
+		-m68000 \
+		-D L_mulsi3 \
+		-D L_modsi3 \
+		-D L_divsi3 \
+		-D L_udivsi3 \
+		-D L_umodsi3 \
+		-c -o $@ $<
+ 
 doom: i_uclinux.o i_uclinuxv.o
 	$(CC) -g -nostdlib \
 		-m68000 \
@@ -24,4 +34,4 @@ doom: i_uclinux.o i_uclinuxv.o
 		-o $@ $^
 
 clean:
-	rm -f doom doom.gdb *.o
+	rm -f doom doom.gdb *.o libgcc/*.o
