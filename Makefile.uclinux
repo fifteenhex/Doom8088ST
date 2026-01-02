@@ -8,14 +8,21 @@ ifndef NOLIBCDIR
 $(error Please pass NOLIBCDIR with the path to your copy of nolibc (tools/include/nolibc/ in the linux source))
 endif
 
+COPTS=-m68000 \
+	-g \
+	-nostdlib \
+	-std=c99 \
+	-flto \
+	-Os
+
+RENDER_OPTIONS=-DFLAT_SPAN -DNR_OF_COLORS=2
+
 %.o: %.c
-	$(CC) -g -nostdlib \
-		-m68000 \
-		-ffunction-sections \
+	$(CC) $(COPTS) \
 		-include $(NOLIBCDIR)/nolibc.h \
 		-DBIG_ENDIAN=4321 -DBYTE_ORDER=BIG_ENDIAN \
-		-DFLAT_SPAN \
-		-Os -c -o $@ $<
+		$(RENDER_OPTIONS) \
+		-c -o $@ $<
 
 libgcc/lb1sf68.o: libgcc/lb1sf68.S
 	$(CC) -g -nostdlib \
@@ -29,11 +36,11 @@ libgcc/lb1sf68.o: libgcc/lb1sf68.S
 
 DOOM_OBJS= am_map.o \
 	d_items.o d_main.o \
-	f_finale.o \
+	f_finale.o f_lib.o \
 	g_game.o \
 	hu_stuff.o \
 	i_audio.o info.o \
-	m_menu.o m_random.o \
+	m_cheat.o m_menu.o m_random.o \
 	p_doors.o p_enemy.o p_enemy2.o p_floor.o p_inter.o p_lights.o p_map.o \
 	p_maputl.o p_mobj.o p_plats.o p_pspr.o p_setup.o p_sight.o p_spec.o \
 	p_switch.o p_telept.o p_tick.o p_user.o \
@@ -48,11 +55,10 @@ doom: i_uclinux.o i_uclinuxv.o \
 	libgcc/muldi3.o libgcc/lb1sf68.o \
 	$(DOOM_OBJS)
 
-	$(CC) -g -nostdlib \
-		-m68000 \
+	$(CC) $(COPTS) \
 		-static \
 		-Wl,-gc-sections \
-		-Wl,-elf2flt=-rv \
+		-Wl,-elf2flt=-rvk \
 		-o $@ $^
 
 clean:

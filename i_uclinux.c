@@ -19,7 +19,7 @@
  *  02111-1307, USA.
  *
  * DESCRIPTION:
- *      Dummy implementation of i_system.h
+ *      uclinux implementation of i_system.h
  *
  *-----------------------------------------------------------------------------*/
 
@@ -126,7 +126,23 @@ static void I_ShutdownTimer(void)
 
 uint8_t __far* I_ZoneBase(uint32_t *heapSize)
 {
-	I_Error("Implement me: I_ZoneBase");
+	uint32_t sz = 512 * 1024;
+	void *heap;
+
+	/*
+	 * Use mmap() directly as malloc() will add some overhead that'll make the
+	 * allocation >512KB and less likely to work
+	 */
+	heap = mmap(NULL, sz, PROT_READ|PROT_WRITE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+
+	if (heap == MAP_FAILED)
+		I_Error("Could not allocate ZoneBase");
+
+	/* Apparently we shouldn't need to zero the memory, but just in case */
+	memset(heap, 0, sz);
+
+	*heapSize = sz;
+	return heap;
 }
 
 
@@ -176,8 +192,8 @@ void I_Error (const char *error, ...)
 
 int main (int argc, char **argv, char **envp)
 {
-	printf("Doom8088: Dummy Edition\n");
+	printf("Doom8088: uclinux 68000 Edition\n");
 
-	D_DoomMain(argc, argv);
+	D_DoomMain(argc, (const char * const *) argv);
 	return 0;
 }
