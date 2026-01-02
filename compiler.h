@@ -35,6 +35,8 @@ int printf(const char *_format, ...);
 int sprintf(char *_s, const char *_format, ...);
 int stricmp(const char *_s1, const char *_s2);
 int toupper(int c);
+#elif defined(NOLIBC)
+// We are using nolibc, don't use system headers.
 #else
 #include <stdlib.h>
 #endif
@@ -60,8 +62,10 @@ typedef          long       int32_t;
 typedef unsigned long      uint32_t;
 
 typedef unsigned long long uint64_t;
+#elif defined(NOLIBC)
+// We are using nolibc, don't use system headers.
 #else
-#include <stdint.h>	
+#include <stdint.h>
 #endif
 
 

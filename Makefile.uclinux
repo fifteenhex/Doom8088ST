@@ -1,0 +1,27 @@
+all: doom
+
+# Remove any builtin targets...
+.SUFFIXES:
+
+# Make sure we know where to get nolibc
+ifndef NOLIBCDIR
+$(error Please pass NOLIBCDIR with the path to your copy of nolibc (tools/include/nolibc/ in the linux source))
+endif
+
+%.o: %.c
+	$(CC) -g -nostdlib \
+		-m68000 \
+		-ffunction-sections \
+		-include $(NOLIBCDIR)/nolibc.h \
+		-Os -c -o $@ $<
+
+doom: i_uclinux.o i_uclinuxv.o
+	$(CC) -g -nostdlib \
+		-m68000 \
+		-static \
+		-Wl,-gc-sections \
+		-Wl,-elf2flt=-rv \
+		-o $@ $^
+
+clean:
+	rm -f doom doom.gdb *.o
