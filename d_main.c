@@ -435,7 +435,11 @@ int16_t M_CheckParm(char *check)
 	int16_t i;
 
 	for (i = 1; i < myargc; i++)
+#ifdef NOLIBC
+		if (!strcmp(check, myargv[i]))
+#else
 		if (!stricmp(check, myargv[i]))
+#endif
 			return i;
 
 	return 0;

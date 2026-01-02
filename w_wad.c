@@ -40,7 +40,9 @@
 #endif
 
 
+#ifndef NOLIBC
 #include <unistd.h>
+#endif
 
 #include "compiler.h"
 #include "d_player.h"
@@ -108,8 +110,8 @@ static void _ffread(void __far* ptr, uint16_t size, FILE* fp)
 
 static void W_ReadDataFromFile(void __far* dest, uint32_t src, uint16_t length)
 {
-	fseek(fileWAD, src, SEEK_SET);
-	_ffread(dest, length, fileWAD);
+//	fseek(fileWAD, src, SEEK_SET);
+//	_ffread(dest, length, fileWAD);
 }
 
 

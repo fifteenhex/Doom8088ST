@@ -37,7 +37,9 @@
 #include "config.h"
 #endif
 
+#ifndef NOLIBC
 #include <string.h>
+#endif
 
 #include "doomtype.h"
 #include "compiler.h"

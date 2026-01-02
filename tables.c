@@ -44,7 +44,9 @@
 #include "config.h"
 #endif
 
+#ifndef NOLIBC
 #include <stddef.h>
+#endif
 #include "w_wad.h"
 #include "tables.h"
 #include "globdata.h"
