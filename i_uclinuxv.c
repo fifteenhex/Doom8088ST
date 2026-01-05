@@ -53,6 +53,10 @@ void I_InitGraphicsHardwareSpecificCode(void)
 	ret = fbdevgl_init("/dev/fb0", &fbglcntx);
 	if (ret)
 		I_Error("Failed to init fbdev");
+
+	fbdevgl_setup_centered_window(&fbglcntx,
+						 SCREENWIDTH,
+						 SCREENHEIGHT);
 }
 
 void I_ShutdownGraphics(void)
@@ -123,9 +127,41 @@ void V_DrawBackground(int16_t backgroundnum)
 {
 }
 
+static uint8_t lumpy[9600];
+
+static inline void draw_lump(const uint8_t *lump, size_t lumpLength)
+{
+	const unsigned int lumpstride = (SCREENWIDTH / 4);
+	for (int line = 0; line < ((lumpLength * 4) /SCREENWIDTH); line++) {
+			for (int b = 0; b < lumpstride * 4; b += 4) {
+				uint8_t byte = lump[(line *lumpstride) + (b / 4)];
+				fbdevgl_window_set_pixel(&fbglcntx, b,     line, ~(byte >> 6) & 0x3);
+				fbdevgl_window_set_pixel(&fbglcntx, b + 1, line, ~(byte >> 4) & 0x3);
+				fbdevgl_window_set_pixel(&fbglcntx, b + 2, line, ~(byte >> 2) & 0x3);
+				fbdevgl_window_set_pixel(&fbglcntx, b + 3, line, ~(byte >> 0) & 0x3);
+			//memcpy(fbglcntx.fb + (fbglcntx.stride * line), lump + (lumpstride * line), lumpstride);
+			}
+	}
+}
 
 void V_DrawRaw(int16_t num, uint16_t offset)
 {
+	const uint8_t *lump = W_TryGetLumpByNum(num);
+	uint16_t lumpLength = W_LumpLength(num);
+
+	offset = (offset / SCREENWIDTH) * VIEWWINDOWWIDTH;
+
+	//printf("offset 0x%x, lump len %d\n", (unsigned) offset, (int) lumpLength);
+
+	if (lump != NULL)
+	{
+		draw_lump(lump, lumpLength);
+		Z_ChangeTagToCache(lump);
+	}
+	else {
+		W_ReadLumpByNum(num, lumpy);
+		draw_lump(lumpy, lumpLength);
+	}
 }
 
 
