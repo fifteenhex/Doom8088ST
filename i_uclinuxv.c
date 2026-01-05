@@ -94,7 +94,10 @@ void R_DrawColumnWall(const draw_column_vars_t *dcvars)
 
 void R_DrawColumnFlat(uint8_t color, const draw_column_vars_t *dcvars)
 {
-	I_Error("Implement me: R_DrawColumnFlat");
+	for (unsigned y = dcvars->yl; y <dcvars->yh; y++) {
+		for (unsigned x = 0; x < 4; x++)
+			fbdevgl_window_set_pixel(&fbglcntx, (dcvars->x * 4) +x, y, color);
+	}
 }
 
 
@@ -167,21 +170,25 @@ void V_DrawRaw(int16_t num, uint16_t offset)
 
 void ST_Drawer(void)
 {
+	//printf("%s:%d\n", __func__, __LINE__);
 }
 
 
 void V_DrawPatchNotScaled(int16_t x, int16_t y, const patch_t __far* patch)
 {
+	//printf("%s:%d\n", __func__, __LINE__);
 }
 
 
 void V_DrawPatchScaled(int16_t x, int16_t y, const patch_t __far* patch)
 {
+	//printf("%s:%d\n", __func__, __LINE__);
 }
 
 
 void wipe_StartScreen(void)
 {
+	fbdevgl_window_clear(&fbglcntx);
 }
 
 
