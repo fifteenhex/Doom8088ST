@@ -34,6 +34,9 @@
 
 #include "globdata.h"
 
+#include "fbdevgl/fbdevgl.h"
+
+static struct fbdevgl_context fbglcntx;
 
 extern const int16_t CENTERY;
 
@@ -45,8 +48,12 @@ void I_ReloadPalette(void)
 
 void I_InitGraphicsHardwareSpecificCode(void)
 {
-}
+	int ret;
 
+	ret = fbdevgl_init("/dev/fb0", &fbglcntx);
+	if (ret)
+		I_Error("Failed to init fbdev");
+}
 
 void I_ShutdownGraphics(void)
 {

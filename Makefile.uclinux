@@ -34,6 +34,13 @@ libgcc/lb1sf68.o: libgcc/lb1sf68.S
 		-D L_umodsi3 \
 		-c -o $@ $<
 
+i_uclinuxv.o: i_uclinuxv.c fbdevgl/fbdevgl.h
+	$(CC) $(COPTS) \
+		-include $(NOLIBCDIR)/nolibc.h \
+		-DBIG_ENDIAN=4321 -DBYTE_ORDER=BIG_ENDIAN \
+		$(RENDER_OPTIONS) \
+		-c -o $@ $<
+
 DOOM_OBJS= am_map.o \
 	d_items.o d_main.o \
 	f_finale.o f_lib.o \

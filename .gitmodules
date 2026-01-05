@@ -1,0 +1,3 @@
+[submodule "fbdevgl"]
+	path = fbdevgl
+	url = git@github.com:fifteenhex/fbdevgl.git
